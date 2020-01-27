@@ -9,127 +9,105 @@ namespace HomeTask5
     class Calculation
     {
 
-        public static int Val = 0;
+        public int totalHours;
         List<Task> tasks = new List<Task>();
         Validation validation = new Validation();
-
+        List<Task> selectedTasks;
         public void CountTotalHoursNecessaryForDoingAllTasks()
         {
             string inputName;
             string inputPriority;
             string inputSeverity;
-            int totalHours = 0;
+            int valuePriority;
+            int valueSeverity;
             string validateFinish = "Yes";
-
             do
             {
-                Console.WriteLine("Enter Name of task: ");
-                inputName = GetName();//it's necessary to check that it's not empty
-                Console.WriteLine("Select Priority of task: ");
-                validation.ShowAllPriorities();
-                inputPriority = GetPriorityValue();
-                Console.WriteLine("Select Severity of task: ");
-                validation.ShowAllSeverities();
-                inputSeverity = GetSeverityValue();
-                //tasks.Add(new Task(inputName, inputPriority, inputSeverity));
-                //tasks.ForEach(Console.WriteLine);
+                inputName = validation.GetName();
+                inputPriority = validation.ValidatePriority();
+                inputSeverity = validation.ValidateSeverity();
                 Console.WriteLine("Your task name, priority, severity: " + inputName + " , " + inputPriority + " , " + inputSeverity);
-                Console.WriteLine("Do you want add more tasks? Write Yes or No");
-                validateFinish = Console.ReadLine();
                 switch (inputPriority)
                 {
                     case "High":
-                        totalHours += (int)EnumPriority.High;
+                        valuePriority = (int)EnumPriority.High;
                         break;
                     case "Medium":
-                        totalHours += (int)EnumPriority.Medium;
+                        valuePriority = (int)EnumPriority.Medium;
                         break;
                     case "Low":
-                        totalHours += (int)EnumPriority.Low;
+                        valuePriority = (int)EnumPriority.Low;
                         break;
                     default:
-                        totalHours += 0;
+                        valuePriority = 0;
                         break;
                 }
                 switch (inputSeverity)
                 {
                     case "Simple":
                         totalHours += (int)EnumSeverity.Simple;
+                        valueSeverity = (int)EnumSeverity.Simple;
                         break;
                     case "Medium":
                         totalHours += (int)EnumSeverity.Medium;
+                        valueSeverity = (int)EnumSeverity.Medium;
                         break;
                     case "Difficult":
                         totalHours += (int)EnumSeverity.Difficult;
+                        valueSeverity = (int)EnumSeverity.Difficult;
                         break;
                     default:
                         totalHours += 0;
+                        valueSeverity = 0;
                         break;
                 }
-                tasks.Add(new Task() { Name = inputName, Priority = inputPriority, Severity = inputSeverity });
-                tasks.ForEach(Console.WriteLine);
+                tasks.Add(new Task()
+                {
+                    Name = inputName,
+                    Priority = inputPriority, 
+                    Severity = inputSeverity, 
+                    PriorityValue = valuePriority, 
+                    SeverityValue = valueSeverity 
+                });
+                Console.WriteLine("Do you want to add more tasks? Write Yes or No");
+                validateFinish = Console.ReadLine();
                 Console.WriteLine("Total Hours = " + totalHours);
-            } while (validateFinish == "Yes");
+             } while (validateFinish == "Yes" || validateFinish == "yes");
+            tasks = tasks.OrderBy(x => x.PriorityValue)
+                .ThenBy(x => x.SeverityValue).ToList();
+            Console.WriteLine("Your tasks are next: ");
+            tasks.ForEach(Console.WriteLine);
             Console.WriteLine("Total Hours = " + totalHours);
         }
         
-        private string GetName()
-        {
-            string inputValue = Console.ReadLine();
-           /* if (inputValue == null)
-            {
-                Console.WriteLine("Your Name is null. Please try again");
-            }*/
-            return inputValue;
-            
-        }
-
-        public string GetPriorityValue()
-        {
-            string inputValue = Console.ReadLine();
-            /*if (inputValue == null)
-            {
-                Console.WriteLine("Your Priority is null. Please try again");
-            }
-            elsevalidation.ValidatePriority(inputValue);*/
-            return inputValue;
-
-            //make Validation here inputPriority = validation.ValidatePriority();
-            //return Console.ReadLine();
-            //VALIDATE that input is not null
-        }
-
-        public string GetSeverityValue()
-        {
-            string inputValue = Console.ReadLine();
-            /*if (inputValue == null)
-            {
-                Console.WriteLine("Your Priority is null. Please try again");
-            }
-            else validation.ValidateSeverity(inputValue);*/
-            return inputValue;
-        }
-
         public void ShowTasksOfCertainPriority() 
         {
             Console.WriteLine("Enter necessary Priority: High, Medium, Low ");
             string myPriority = Console.ReadLine();
-            for (int i = 0; i < tasks.Count; i++)
-            {
-                if (tasks[i].Priority.Equals(myPriority))
-                {
-                    Console.WriteLine(tasks[i]);
-                }
-                else Console.WriteLine("No matches");
-            }
+            selectedTasks = tasks.Where(x => x.Priority == myPriority.First().ToString().ToUpper() + myPriority.Substring(1)).ToList();
+            if(selectedTasks.Count > 0)
+                selectedTasks.ForEach(Console.WriteLine);
+            else
+                Console.WriteLine("No matches");
         }
 
         public void ShowTasksThatCouldBeDoneForNDays()
         {
             Console.WriteLine("Enter amount of days: ");
-            int myDay = int.Parse(Console.ReadLine());
-            tasks.Sort(GetPriorityValue);
-
+            int inputHours = int.Parse(Console.ReadLine()) * 8;
+            int result = 0;
+            for (int i = 0; i < tasks.Count; i++)
+            {
+                if (result + tasks[i].SeverityValue <= inputHours)
+                {
+                    result += tasks[i].SeverityValue;
+                    Console.WriteLine(tasks[i]);
+                }
+                else 
+                {
+                    break;
+                }
+            }  
         }
     }
 }

@@ -13,6 +13,7 @@ namespace HomeTask5
             Calculation calculation = new Calculation();
             calculation.CountTotalHoursNecessaryForDoingAllTasks();
             calculation.ShowTasksOfCertainPriority();
+            calculation.ShowTasksThatCouldBeDoneForNDays();
         }
     }
 }

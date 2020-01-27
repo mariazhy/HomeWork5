@@ -13,12 +13,16 @@ namespace HomeTask5
 
         public string Priority { get; set; }
         public string Severity { get; set; }
-
-        public Task(string name, string priority, string severity)
+        public int PriorityValue { get; set; }
+        public int SeverityValue { get; set; }
+        
+        public Task(string name, string priority, string severity, int priorityValue, int severityValue)
         {
             Name = name;
             Priority = priority;
             Severity = severity;
+            SeverityValue = severityValue;
+            PriorityValue = priorityValue;
         }
 
         public Task()
@@ -27,7 +31,7 @@ namespace HomeTask5
 
         public override string ToString()
         {
-            return "Name: " + Name + "   Priority: " + Priority + "   Severity: " + Severity;
+            return "Name: " + Name + "   Priority: " + Priority + "   Severity: " + Severity + "   PriorityValue: " + PriorityValue + "   SeverityValue: " + SeverityValue;
         }
     }
 }
